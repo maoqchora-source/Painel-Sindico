@@ -17,19 +17,25 @@
 <body>
 
 <div class="container">
-    <h1>Painel do Síndico: Consumo Geral</h1>
+    <div style="text-align: center; margin-bottom: 20px;">
+        <img src="logo.png" alt="Logo AbrangeBox" style="max-width: 550px; height: auto;">
+    </div>
+    
+    <h1>Dashboard da Vaga: <span id="vaga-id">Carregando...</span></h1>
     
     <div class="stats-grid">
-        <div class="card"><h3>Consumo Geral (Total)</h3><p id="total-geral">0.00 kWh</p></div>
-        <div class="card"><h3>Total de Registros</h3><p id="total-registros">0</p></div>
+        <div class="card"><h3>Consumo Total</h3><p id="total-kwh">0.00 kWh</p></div>
+        <div class="card"><h3>Total de Registros</h3><p id="total-regs">0</p></div>
     </div>
 
     <div class="card">
-        <table id="tabela-geral">
-            <thead><tr><th>Data</th><th>Vaga</th><th>Consumo</th></tr></thead>
+        <h3>Histórico de Consumo</h3>
+        <table id="tabela-consumo">
+            <thead>
+                <tr><th>Data</th><th>Consumo (kWh)</th></tr>
+            </thead>
             <tbody id="corpo-tabela"></tbody>
         </table>
-        <a href="LINK_DA_SUA_PLANILHA_AQUI" target="_blank" class="btn">Abrir Planilha Original</a>
     </div>
 </div>
 
