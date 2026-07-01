@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel do Síndico - AbrangeBox</title>
+    <style>
+        :root { --bg: #f1f5f9; --card: #ffffff; --primary: #10b981; --text: #1e293b; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); padding: 40px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 900px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .card { background: var(--card); padding: 25px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .btn { display: inline-block; padding: 10px 20px; background: var(--primary); color: white; text-decoration: none; border-radius: 8px; margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
+        th, td { padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: left; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Painel do Síndico: Consumo Geral</h1>
+    
+    <div class="stats-grid">
+        <div class="card"><h3>Consumo Geral (Total)</h3><p id="total-geral">0.00 kWh</p></div>
+        <div class="card"><h3>Total de Registros</h3><p id="total-registros">0</p></div>
+    </div>
+
+    <div class="card">
+        <table id="tabela-geral">
+            <thead><tr><th>Data</th><th>Vaga</th><th>Consumo</th></tr></thead>
+            <tbody id="corpo-tabela"></tbody>
+        </table>
+        <a href="LINK_DA_SUA_PLANILHA_AQUI" target="_blank" class="btn">Abrir Planilha Original</a>
+    </div>
+</div>
+
+<script>
+    const URL_GAS = 'https://script.google.com/macros/s/AKfycbzokzR3uzo9PYgTFbRcXWp1X9tVUX0uFKDDgfBvKj_I1Ip7_omTZ1pJFWVzXcqROlcbLg/exec';
+
+    function carregarDados() {
+        const script = document.createElement('script');
+        script.src = URL_GAS + '?callback=processarDados';
+        document.body.appendChild(script);
+    }
+
+    function processarDados(dados) {
+        // Exibe tudo sem filtrar
+        let somaTotal = 0;
+        const corpo = document.getElementById('corpo-tabela');
+        
+        dados.forEach(item => {
+            somaTotal += item.consumo;
+            corpo.innerHTML += `<tr>
+                <td>${new Date(item.data).toLocaleString('pt-BR')}</td>
+                <td>${item.vaga}</td>
+                <td>${item.consumo.toFixed(2)} kWh</td>
+            </tr>`;
+        });
+
+        document.getElementById('total-geral').innerText = somaTotal.toFixed(2) + " kWh";
+        document.getElementById('total-registros').innerText = dados.length;
+    }
+
+    carregarDados();
+</script>
+</body>
+</html>
