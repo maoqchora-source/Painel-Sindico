@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal do Morador - AbrangeBox</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f1f5f9; display: flex; height: 100vh; justify-content: center; align-items: center; }
+        .login-card { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 380px; border: 1px solid #e2e8f0; }
+        
+        /* Estilização da embalagem da logo para garantir a centralização */
+        .logo-wrapper { text-align: center; margin-bottom: 25px; }
+        .logo-wrapper img { width: 100%; max-width: 550px; height: auto; }
+
+        label { font-weight: 600; display: block; margin-top: 15px; color: #1e293b; font-size: 14px; }
+        input { width: 100%; padding: 12px; margin-top: 6px; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; background-color: #f8fafc; transition: border 0.2s; }
+        input:focus { border-color: #3b82f6; outline: none; background-color: white; }
+        button { background-color: #3b82f6; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; margin-top: 30px; width: 100%; font-size: 16px; font-weight: bold; box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2); }
+        button:hover { background-color: #2563eb; }
+        .mensagem-erro { color: #ef4444; font-size: 13px; text-align: center; margin-top: 15px; display: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <div class="logo-wrapper">
+        <img src="logo.png" alt="Logo AbrangeBox">
+    </div>
+    
+    <form id="formLogin" onsubmit="efetuarLogin(event)">
+        <label>ID de Acesso da Vaga:</label>
+        <input type="text" id="id_hardware" placeholder="Ex: ap01 ou 01" required>
+        
+        <label>Senha:</label>
+        <input type="password" id="senha" placeholder="Digite sua senha" required>
+        
+        <div id="erroLogin" class="mensagem-erro">Vaga ou senha incorreta!</div>
+
+        <button type="submit" id="btnEntrar">Entrar no Meu Painel</button>
+    </form>
+</div>
+
+<script>
+    async function efetuarLogin(event) {
+        // Impede a página de recarregar
+        event.preventDefault(); 
+        
+        const txtVaga = document.getElementById('id_hardware').value.trim();
+        const txtSenha = document.getElementById('senha').value.trim();
+        const btn = document.getElementById('btnEntrar');
+        const erroBox = document.getElementById('erroLogin');
+
+        // Insira aqui a URL exata do seu Web App implantado no Google Apps Script
+        const urlGAS = "https://script.google.com/macros/s/AKfycbzokzR3uzo9PYgTFbRcXWp1X9tVUX0uFKDDgfBvKj_I1Ip7_omTZ1pJFWVzXcqROlcbLg/exec";
+
+        // Feedback visual de carregamento
+        btn.innerText = "Verificando...";
+        btn.style.backgroundColor = "#94a3b8";
+        btn.disabled = true;
+        erroBox.style.display = "none";
+
+        try {
+            // Dispara a consulta para o GAS via POST (seguro)
+            const resposta = await fetch(urlGAS, {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    vaga: txtVaga, 
+                    senha: txtSenha, 
+                    acao: "verificar_login" 
+                })
+            });
+            
+            const resultado = await resposta.json();
+
+            if (resultado.status === "sucesso") {
+                // Salva os dados na sessão temporária do navegador
+                sessionStorage.setItem('vagaLogada', txtVaga);
+                sessionStorage.setItem('senhaLogada', txtSenha);
+                
+                // Redireciona para a segunda página (Dashboard)
+                window.location.href = "dashboard.html";
+            } else {
+                // Se a senha estiver errada
+                erroBox.innerText = resultado.mensagem || "Erro ao fazer login.";
+                erroBox.style.display = "block";
+                resetBotao();
+            }
+        } catch (error) {
+            erroBox.innerText = "Erro de conexão com o servidor.";
+            erroBox.style.display = "block";
+            resetBotao();
+        }
+    }
+
+    function resetBotao() {
+        const btn = document.getElementById('btnEntrar');
+        btn.innerText = "Entrar no Meu Painel";
+        btn.style.backgroundColor = "#3b82f6";
+        btn.disabled = false;
+    }
+</script>
+
+</body>
+</html>
