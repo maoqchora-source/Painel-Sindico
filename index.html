@@ -3,70 +3,331 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel do Síndico - AbrangeBox</title>
+    <title>Painel Administrador - AbrangeBox</title>
     <style>
-        :root { --bg: #f1f5f9; --card: #ffffff; --primary: #10b981; --text: #1e293b; --danger: #ef4444; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); padding: 40px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
-        .container { width: 100%; max-width: 900px; display: none; position: relative; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .card { background: var(--card); padding: 25px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #e2e8f0; }
-        .card h3 { font-size: 14px; color: #64748b; margin-bottom: 10px; }
-        .card p { font-size: 24px; font-weight: 700; color: var(--text); }
-        .btn { display: inline-block; padding: 10px 20px; background: var(--primary); color: white; text-decoration: none; border-radius: 8px; margin-top: 20px; font-weight: 600; border: none; cursor: pointer; }
-        .btn:hover { background-color: #059669; }
-        .btn-logout { position: absolute; top: 0; right: 0; background-color: var(--danger); }
-        .btn-logout:hover { background-color: #dc2626; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
-        th, td { padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: left; }
-        th { background-color: #f8fafc; color: #64748b; font-size: 14px; }
+        :root { 
+            --bg: #f8f9fa; 
+            --card: #ffffff; 
+            --primary: #0056b3; /* Azul AbrangeBox */
+            --primary-hover: #004085;
+            --success: #28a745; /* Verde AbrangeBox */
+            --success-hover: #218838;
+            --text: #1a202c; 
+            --text-secondary: #64748b;
+            --danger: #dc3545; 
+            --danger-hover: #c82333;
+            --accent: #0056b3; 
+            --border: #e2e8f0;
+        }
 
-        /* Estilo da Caixa de Login do Admin */
-        .login-box { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 380px; border: 1px solid #e2e8f0; text-align: center; margin-top: 10vh; }
-        .login-box input { width: 100%; padding: 12px; margin-top: 8px; margin-bottom: 20px; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; background-color: #f8fafc; }
-        .login-box label { font-weight: 600; display: block; text-align: left; color: #1e293b; font-size: 14px; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', 'Inter', 'Roboto', sans-serif;
+        }
+
+        body { 
+            background-color: var(--bg); 
+            padding: 40px 20px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start; 
+            min-height: 100vh; 
+            color: var(--text); 
+            line-height: 1.6;
+        }
+
+        .container { 
+            width: 100%; 
+            max-width: 900px; 
+            display: none; 
+            position: relative; 
+        }
+
+        /* Header do Painel */
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-logo {
+            height: 120px; /* Altura proporcional para o logo em áreas internas */
+            width: auto;
+            object-fit: contain;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 25px;
+        }
+
+        /* Grid de Status */
+        .stats-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 20px; 
+            margin-bottom: 30px; 
+        }
+
+        /* Cartões */
+        .card { 
+            background: var(--card); 
+            padding: 25px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 25px rgba(0, 86, 179, 0.03); 
+            margin-bottom: 25px; 
+            border: 1px solid var(--border); 
+            transition: transform 0.3s ease;
+        }
+
+        .card h3 { 
+            font-size: 13px; 
+            color: var(--text-secondary); 
+            margin-bottom: 10px; 
+            text-transform: uppercase; 
+            letter-spacing: 0.8px; 
+            font-weight: 700;
+        }
+
+        .card p { 
+            font-size: 28px; 
+            font-weight: 800; 
+            color: var(--text); 
+        }
+
+        /* Botões */
+        .btn { 
+            display: inline-flex; 
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px; 
+            background: var(--primary); 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 30px; /* Botões arredondados como os do site principal */
+            font-weight: 600; 
+            font-size: 14px;
+            border: none; 
+            cursor: pointer; 
+            transition: background 0.3s, transform 0.2s; 
+            box-shadow: 0 4px 6px rgba(0, 86, 179, 0.15);
+        }
+
+        .btn:hover { 
+            background-color: var(--primary-hover); 
+            transform: translateY(-1px);
+        }
+
+        .btn-accent { 
+            background: var(--success); 
+            box-shadow: 0 4px 6px rgba(40, 167, 69, 0.15);
+        }
+
+        .btn-accent:hover { 
+            background-color: var(--success-hover); 
+        }
+
+        .btn-logout { 
+            background-color: var(--danger); 
+            box-shadow: 0 4px 6px rgba(220, 53, 69, 0.15);
+        }
+
+        .btn-logout:hover { 
+            background-color: var(--danger-hover); 
+        }
+
+        /* Tabelas */
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px; 
+            background: white; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            border: 1px solid var(--border);
+        }
+
+        th, td { 
+            padding: 15px 20px; 
+            border-bottom: 1px solid var(--border); 
+            text-align: left; 
+            font-size: 14px;
+        }
+
+        th { 
+            background-color: #f8fafc; 
+            color: var(--text-secondary); 
+            font-size: 12px; 
+            font-weight: 700; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        .txt-sucesso { 
+            color: var(--success); 
+            font-weight: 700; 
+            margin-top: 15px; 
+            font-size: 14px; 
+            background-color: #f0fff4;
+            border: 1px solid #c6f6d5;
+            padding: 12px 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        /* Estilo da Caixa de Login */
+        .login-box { 
+            background: white; 
+            padding: 45px 35px; 
+            border-radius: 24px; 
+            box-shadow: 0 20px 40px rgba(0, 86, 179, 0.06); 
+            width: 100%; 
+            max-width: 400px; 
+            border: 1px solid var(--border); 
+            text-align: center; 
+            margin-top: 8vh; 
+        }
+
+        .login-box h3 {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 5px;
+        }
+
+        .login-box input { 
+            width: 100%; 
+            padding: 14px; 
+            margin-top: 8px; 
+            margin-bottom: 20px; 
+            box-sizing: border-box; 
+            border: 1px solid #cbd5e1; 
+            border-radius: 12px; 
+            font-size: 15px; 
+            background-color: #f8fafc; 
+            transition: border-color 0.3s;
+        }
+
+        .login-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .login-box label { 
+            font-weight: 700; 
+            display: block; 
+            text-align: left; 
+            color: var(--text); 
+            font-size: 13px; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            body { padding: 20px 10px; }
+            .panel-header { flex-direction: column; gap: 15px; text-align: center; }
+            h1 { font-size: 20px; }
+            th, td { padding: 10px 12px; font-size: 12px; }
+        }
     </style>
 </head>
 <body>
 
 <div class="login-box" id="caixa-login">
-    <div style="margin-bottom: 20px;"><img src="logo.png" alt="Logo" style="max-width: 220px; height: auto;"></div>
+    <div style="margin-bottom: 25px;">
+        <img src="logo.png" alt="Logo" style="max-width: 220px; height: auto; object-fit: contain;">
+    </div>
     <h3>Painel do Síndico</h3>
-    <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">Acesso restrito ao administrador</p>
+    <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 25px;">Acesso restrito ao administrador</p>
     <form onsubmit="autenticarAdmin(event)">
         <label>Senha Master:</label>
         <input type="password" id="senha-admin" placeholder="Digite a senha ADM" required>
-        <div id="erro-login" style="color: var(--danger); font-size: 13px; margin-bottom: 15px; display: none; font-weight: 600;"></div>
-        <button type="submit" class="btn" id="btn-entrar" style="width: 100%; margin-top: 0;">Entrar no Sistema</button>
+        <div id="erro-login" style="color: var(--danger); font-size: 13px; margin-bottom: 15px; display: none; font-weight: 700;"></div>
+        <button type="submit" class="btn" id="btn-entrar" style="width: 100%; margin-top: 0; padding: 14px;">Entrar no Sistema</button>
     </form>
 </div>
 
 <div class="container" id="conteudo-dashboard">
-    <button class="btn btn-logout" onclick="efetuarLogout()">Sair do Painel</button>
-    <div style="text-align: center; margin-bottom: 20px;">
-        <img src="logo.png" alt="Logo AbrangeBox" style="max-width: 550px; height: auto;">
+    <div class="panel-header">
+        <img src="logo.png" alt="Logo AbrangeBox" class="panel-logo">
+        <button class="btn btn-logout" onclick="efetuarLogout()">Sair do Painel</button>
     </div>
-    <h1>Dashboard Admin: <span style="color: #64748b;">Consumo Geral do Condomínio</span></h1>
+    
+    <h1>Dashboard Admin <span style="color: var(--text-secondary); font-weight: 400;">| Consumo Geral</span></h1>
     
     <div class="stats-grid">
-        <div class="card"><h3>Consumo Geral Acumulado</h3><p id="total-geral">Buscando...</p></div>
-        <div class="card"><h3>Total de Leituras Gravadas</h3><p id="total-registros">0</p></div>
+        <div class="card" style="border-top: 4px solid var(--primary);">
+            <h3>Consumo Geral Acumulado</h3>
+            <p id="total-geral">Buscando...</p>
+        </div>
+        <div class="card" style="border-top: 4px solid var(--success);">
+            <h3>Total de Leituras Gravadas</h3>
+            <p id="total-registros">0</p>
+        </div>
+    </div>
+
+    <div class="card" style="border-left: 5px solid var(--success);">
+        <h3>Fechamento de Competência / Relatório Mensal</h3>
+        <p style="font-size: 14px; color: var(--text-secondary); font-weight: normal; margin-top: 5px; margin-bottom: 15px;">
+            Clique no botão abaixo para consolidar as leituras e gerar o cálculo mensal de rateio.
+        </p>
+        <button class="btn btn-accent" id="btn-fechamento" onclick="processarFechamentoMensal()">Realizar Fechamento Mensal</button>
+        <div id="msg-fechamento" class="txt-sucesso" style="display: none;"></div>
+        
+        <table id="tabela-fechamento" style="display: none; margin-top: 25px;">
+            <thead>
+                <tr>
+                    <th>ID Ciclo</th>
+                    <th>Vaga</th>
+                    <th>Leitura Anterior (kWh)</th>
+                    <th>Leitura Atual (kWh)</th>
+                    <th>Consumo Período (kWh)</th>
+                </tr>
+            </thead>
+            <tbody id="corpo-fechamento"></tbody>
+        </table>
     </div>
 
     <div class="card">
-        <h3>Histórico de Leituras Globais</h3>
+        <h3>Histórico de Leituras Globais (Tempo Real)</h3>
         <table id="tabela-geral">
-            <thead><tr><th>Data/Hora</th><th>Vaga</th><th>Leitura Atual</th></tr></thead>
+            <thead>
+                <tr>
+                    <th>Data/Hora</th>
+                    <th>Vaga</th>
+                    <th>Leitura Atual</th>
+                </tr>
+            </thead>
             <tbody id="corpo-tabela"></tbody>
         </table>
-        <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vT7jyVJ-hTxoT7k5zigNKg_osDnCj7eC6yWKjSgH00h6FkFlHoekW5b0B09iPTxz7covHsfURZ4B98m/pub?gid=0&single=true&output=csv" target="_blank" class="btn">Abrir Planilha Original</a>
+        <div style="margin-top: 25px;">
+            <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vT7jyVJ-hTxoT7k5zigNKg_osDnCj7eC6yWKjSgH00h6FkFlHoekW5b0B09iPTxz7covHsfURZ4B98m/pub?gid=0&single=true&output=csv
+" target="_blank" class="btn" style="background-color: var(--text-secondary); box-shadow: none;">Abrir Planilha Original ↗</a>
+        </div>
     </div>
 </div>
 
 <script>
+    // URL do Apps Script do seu projeto atual
     const URL_GAS = 'https://script.google.com/macros/s/AKfycbzokzR3uzo9PYgTFbRcXWp1X9tVUX0uFKDDgfBvKj_I1Ip7_omTZ1pJFWVzXcqROlcbLg/exec';
 
     window.onload = function() {
-        // Se já tiver uma sessão ativa do admin, carrega direto
         if (sessionStorage.getItem('adminLogado') === 'true') {
             exibirDashboard();
         }
@@ -94,12 +355,13 @@
                 sessionStorage.setItem('adminSenha', senha);
                 exibirDashboard();
             } else {
-                erro.innerText = "Senha Master incorreta!";
+                erro.innerText = resultado.mensagem || "Senha Master incorreta!";
                 erro.style.display = 'block';
                 btn.innerText = 'Entrar no Sistema';
                 btn.disabled = false;
             }
         } catch (e) {
+            console.error(e);
             erro.innerText = "Erro ao conectar ao servidor.";
             erro.style.display = 'block';
             btn.innerText = 'Entrar no Sistema';
@@ -126,6 +388,7 @@
                 renderizarPainelSindico(resultado.dados);
             }
         } catch (error) {
+            console.error(error);
             document.getElementById('corpo-tabela').innerHTML = "<tr><td colspan='3' style='color: var(--danger); text-align: center;'>Erro ao atualizar tabela.</td></tr>";
         }
     }
@@ -163,7 +426,58 @@
         document.getElementById('total-geral').innerText = somaTotalCondominio.toFixed(2) + " kWh";
     }
 
-    function efetuaraLogout() {
+    async function processarFechamentoMensal() {
+        const btn = document.getElementById('btn-fechamento');
+        const msg = document.getElementById('msg-fechamento');
+        const tabela = document.getElementById('tabela-fechamento');
+        const corpoFechamento = document.getElementById('corpo-fechamento');
+        const senha = sessionStorage.getItem('adminSenha');
+
+        if (!confirm("Tem certeza que deseja processar o faturamento agora? Esta ação gravará dados permanentes na planilha.")) {
+            return;
+        }
+
+        btn.innerText = "Processando Fechamento...";
+        btn.disabled = true;
+        msg.style.display = "none";
+
+        try {
+            const resposta = await fetch(URL_GAS, {
+                method: 'POST',
+                body: JSON.stringify({ vaga: "ADMIN", senha: senha, acao: "realizar_fechamento_mes" })
+            });
+            const resultado = await resposta.json();
+
+            if (resultado.status === "sucesso") {
+                msg.innerText = "✓ " + resultado.mensagem;
+                msg.style.display = "block";
+                
+                corpoFechamento.innerHTML = "";
+                resultado.dados.forEach(item => {
+                    corpoFechamento.innerHTML += `<tr>
+                        <td><strong>#${item.idFechamento}</strong></td>
+                        <td><strong>${item.vaga}</strong></td>
+                        <td>${item.leituraAnterior.toFixed(2)}</td>
+                        <td>${item.leituraAtual.toFixed(2)}</td>
+                        <td style="color: var(--success); font-weight: bold;">${item.consumoPeriodo.toFixed(2)} kWh</td>
+                    </tr>`;
+                });
+                
+                tabela.style.display = "table";
+                carregarDadosGlobais();
+            } else {
+                alert("Erro: " + resultado.mensagem);
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Erro crítico de comunicação com o Google Apps Script.");
+        } finally {
+            btn.innerText = "Realizar Fechamento Mensal";
+            btn.disabled = false;
+        }
+    }
+
+    function efetuarLogout() {
         sessionStorage.clear();
         window.location.reload();
     }
